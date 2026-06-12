@@ -1,0 +1,691 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);font-size:14px;color:var(--color-text-primary);background:var(--color-background-tertiary)}
+.app{display:flex;min-height:100vh}
+.sidebar{width:220px;background:var(--color-background-primary);border-right:0.5px solid var(--color-border-tertiary);display:flex;flex-direction:column;flex-shrink:0}
+.sidebar-logo{padding:20px 16px 16px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.sidebar-logo h1{font-size:16px;font-weight:500;color:var(--color-text-primary)}
+.sidebar-logo p{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;color:var(--color-text-secondary);font-size:13px;border-left:3px solid transparent;transition:all .15s}
+.nav-item:hover{background:var(--color-background-secondary);color:var(--color-text-primary)}
+.nav-item.active{background:var(--color-background-secondary);color:var(--color-text-primary);border-left-color:#185FA5}
+.nav-item i{font-size:16px}
+.nav-section{padding:12px 16px 4px;font-size:11px;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.5px}
+.main{flex:1;overflow:auto}
+.topbar{background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);padding:12px 24px;display:flex;align-items:center;justify-content:space-between}
+.topbar h2{font-size:16px;font-weight:500}
+.content{padding:24px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);cursor:pointer;font-size:13px;background:var(--color-background-primary);color:var(--color-text-primary);transition:all .15s}
+.btn:hover{background:var(--color-background-secondary)}
+.btn-primary{background:#185FA5;color:#fff;border-color:#185FA5}
+.btn-primary:hover{background:#0C447C;border-color:#0C447C}
+.btn-danger{background:#A32D2D;color:#fff;border-color:#A32D2D}
+.btn-danger:hover{background:#791F1F}
+.btn-sm{padding:5px 10px;font-size:12px}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px 20px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.metric{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:14px 16px}
+.metric-label{font-size:12px;color:var(--color-text-secondary);margin-bottom:4px}
+.metric-value{font-size:22px;font-weight:500}
+.metric-sub{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500}
+.badge-green{background:#EAF3DE;color:#3B6D11}
+.badge-red{background:#FCEBEB;color:#A32D2D}
+.badge-orange{background:#FAEEDA;color:#854F0B}
+.badge-blue{background:#E6F1FB;color:#185FA5}
+.badge-gray{background:#F1EFE8;color:#5F5E5A}
+.table{width:100%;border-collapse:collapse;font-size:13px}
+.table th{text-align:left;padding:8px 12px;font-weight:500;font-size:11px;color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-tertiary);text-transform:uppercase;letter-spacing:.4px}
+.table td{padding:10px 12px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.table tr:last-child td{border-bottom:none}
+.table tr:hover td{background:var(--color-background-secondary)}
+.week-grid{display:grid;grid-template-columns:60px repeat(5,1fr);gap:1px;background:var(--color-border-tertiary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden}
+.week-cell{background:var(--color-background-primary);padding:6px;min-height:52px;font-size:11px}
+.week-header{background:var(--color-background-secondary);padding:8px 6px;font-size:12px;font-weight:500;text-align:center}
+.week-time{background:var(--color-background-secondary);padding:8px 6px;font-size:11px;color:var(--color-text-secondary);text-align:right;display:flex;align-items:center;justify-content:flex-end}
+.kurs-pill{border-radius:6px;padding:4px 6px;margin-bottom:3px;cursor:pointer;font-size:11px;line-height:1.3}
+.kurs-pill-blue{background:#B5D4F4;color:#042C53}
+.kurs-pill-orange{background:#FAC775;color:#412402}
+.kurs-pill-red{background:#F7C1C1;color:#501313}
+.kurs-pill-green{background:#C0DD97;color:#173404}
+.kurs-pill-purple{background:#CECBF6;color:#26215C}
+.kurs-pill-gray{background:#D3D1C7;color:#2C2C2A}
+.modal-bg{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:100}
+.modal{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:24px;width:480px;max-width:95vw;max-height:90vh;overflow-y:auto}
+.modal h3{font-size:15px;font-weight:500;margin-bottom:16px}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:12px;color:var(--color-text-secondary);margin-bottom:4px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:7px 10px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);font-size:13px;font-family:var(--font-sans)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.alert{padding:10px 14px;border-radius:var(--border-radius-md);font-size:13px;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.alert-blue{background:#E6F1FB;color:#185FA5;border:0.5px solid #B5D4F4}
+.alert-red{background:#FCEBEB;color:#A32D2D;border:0.5px solid #F7C1C1}
+.alert-green{background:#EAF3DE;color:#3B6D11;border:0.5px solid #C0DD97}
+.alert-orange{background:#FAEEDA;color:#854F0B;border:0.5px solid #FAC775}
+.divider{height:0.5px;background:var(--color-border-tertiary);margin:16px 0}
+.avatar{width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;background:#B5D4F4;color:#042C53;flex-shrink:0}
+.notif-dot{width:8px;height:8px;border-radius:50%;background:#A32D2D;display:inline-block}
+.sidebar-bottom{margin-top:auto;padding:16px;border-top:0.5px solid var(--color-border-tertiary)}
+.user-row{display:flex;align-items:center;gap:10px}
+.tabs{display:flex;gap:4px;margin-bottom:20px}
+.tab{padding:6px 14px;border-radius:var(--border-radius-md);cursor:pointer;font-size:13px;color:var(--color-text-secondary);border:0.5px solid transparent}
+.tab.active{background:var(--color-background-primary);border-color:var(--color-border-secondary);color:var(--color-text-primary);font-weight:500}
+.search-box{display:flex;align-items:center;gap:8px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:6px 10px;font-size:13px;color:var(--color-text-secondary);margin-bottom:16px}
+.empty-state{text-align:center;padding:40px 20px;color:var(--color-text-secondary)}
+.empty-state i{font-size:36px;margin-bottom:8px;display:block}
+.prog-bar{height:6px;background:var(--color-background-secondary);border-radius:4px;overflow:hidden;margin-top:4px}
+.prog-fill{height:100%;border-radius:4px;background:#185FA5}
+.notification-item{display:flex;align-items:flex-start;gap:12px;padding:12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);margin-bottom:8px;background:var(--color-background-primary)}
+.notification-item.unread{border-left:3px solid #185FA5;background:#E6F1FB}
+</style>
+
+<div class="app" id="root">
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <h1>Fit &amp; Aktiv</h1>
+    <p>Kursplanungssystem</p>
+  </div>
+  <div class="nav-section">Übersicht</div>
+  <div class="nav-item active" onclick="navigate('dashboard')"><i class="ti ti-layout-dashboard"></i>Dashboard</div>
+  <div class="nav-item" onclick="navigate('kursplan')"><i class="ti ti-calendar"></i>Kursplan</div>
+  <div class="nav-section">Verwaltung</div>
+  <div class="nav-item" onclick="navigate('kurse')"><i class="ti ti-activity"></i>Kurse</div>
+  <div class="nav-item" onclick="navigate('mitarbeiter')"><i class="ti ti-users"></i>Mitarbeiter</div>
+  <div class="nav-item" onclick="navigate('krankmeldung')"><i class="ti ti-alert-circle"></i>Krankmeldung</div>
+  <div class="nav-section">System</div>
+  <div class="nav-item" onclick="navigate('benachrichtigungen')"><i class="ti ti-bell"></i>Benachrichtigungen <span id="notif-badge" style="margin-left:auto;background:#A32D2D;color:#fff;font-size:10px;padding:1px 6px;border-radius:10px">3</span></div>
+  <div class="nav-item" onclick="navigate('einstellungen')"><i class="ti ti-settings"></i>Einstellungen</div>
+  <div class="sidebar-bottom">
+    <div class="user-row">
+      <div class="avatar">AL</div>
+      <div>
+        <div style="font-size:13px;font-weight:500">Admin Lisa</div>
+        <div style="font-size:11px;color:var(--color-text-secondary)">Administrator</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <h2 id="page-title">Dashboard</h2>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span style="font-size:12px;color:var(--color-text-secondary)">Woche 24 – Mo 09.06. bis Fr 13.06.2026</span>
+      <button class="btn btn-sm" onclick="showModal('kurs-modal')"><i class="ti ti-plus"></i> Neuer Kurs</button>
+    </div>
+  </div>
+  <div class="content" id="page-content"></div>
+</div>
+</div>
+
+<!-- Modal: Neuer Kurs -->
+<div id="kurs-modal" style="display:none" class="modal-bg">
+<div class="modal">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <h3 style="margin:0">Neuen Kurs anlegen</h3>
+    <button class="btn btn-sm" onclick="hideModal('kurs-modal')"><i class="ti ti-x"></i></button>
+  </div>
+  <div class="form-group"><label>Kursname</label><input type="text" placeholder="z. B. Yoga Basic" id="new-kurs-name"></div>
+  <div class="form-row">
+    <div class="form-group"><label>Kurstyp</label>
+      <select id="new-kurs-typ">
+        <option>Yoga</option><option>Pilates</option><option>Spinning</option>
+        <option>Krafttraining</option><option>Functional Fit</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Studio</label>
+      <select id="new-kurs-studio">
+        <option>Studio 1 – Krefeld Mitte</option>
+        <option>Studio 2 – Krefeld Nord</option>
+        <option>Studio 3 – Krefeld Süd</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>Datum</label><input type="date" id="new-kurs-datum" value="2026-06-09"></div>
+    <div class="form-group"><label>Uhrzeit</label><input type="time" id="new-kurs-zeit" value="09:00"></div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>Dauer (Minuten)</label><input type="number" value="60" id="new-kurs-dauer"></div>
+    <div class="form-group"><label>Trainer zuweisen</label>
+      <select id="new-kurs-trainer">
+        <option value="">– Noch nicht zugewiesen –</option>
+        <option>Max Müller</option><option>Anna Weber</option><option>Jonas Klein</option>
+        <option>Sara Bauer</option><option>Tim Schulz</option>
+      </select>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px">
+    <button class="btn" onclick="hideModal('kurs-modal')">Abbrechen</button>
+    <button class="btn btn-primary" onclick="saveKurs()"><i class="ti ti-check"></i> Speichern</button>
+  </div>
+</div>
+</div>
+
+<!-- Modal: Mitarbeiter -->
+<div id="ma-modal" style="display:none" class="modal-bg">
+<div class="modal">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <h3 style="margin:0">Mitarbeiter anlegen</h3>
+    <button class="btn btn-sm" onclick="hideModal('ma-modal')"><i class="ti ti-x"></i></button>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>Vorname</label><input type="text" id="ma-vorname" placeholder="z. B. Max"></div>
+    <div class="form-group"><label>Nachname</label><input type="text" id="ma-nachname" placeholder="z. B. Müller"></div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>E-Mail</label><input type="email" id="ma-email" placeholder="max@fit-aktiv.de"></div>
+    <div class="form-group"><label>Rolle</label>
+      <select id="ma-rolle"><option>Trainer</option><option>Coach</option><option>Kursleiter</option></select>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>Beschäftigungsmodell</label>
+      <select id="ma-modell"><option>Vollzeit (8h/Tag)</option><option>Teilzeit (10h/Woche)</option></select>
+    </div>
+    <div class="form-group"><label>Qualifikationen</label>
+      <select id="ma-quali">
+        <option>Yoga, Pilates</option><option>Spinning, Krafttraining</option>
+        <option>Functional Fit</option><option>Alle Kurse</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-group">
+    <label>Studios (Mehrfachauswahl möglich)</label>
+    <div style="display:flex;gap:12px;margin-top:4px;flex-wrap:wrap">
+      <label style="display:flex;align-items:center;gap:4px;font-size:13px"><input type="checkbox" checked> Studio 1</label>
+      <label style="display:flex;align-items:center;gap:4px;font-size:13px"><input type="checkbox"> Studio 2</label>
+      <label style="display:flex;align-items:center;gap:4px;font-size:13px"><input type="checkbox"> Studio 3</label>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px">
+    <button class="btn" onclick="hideModal('ma-modal')">Abbrechen</button>
+    <button class="btn btn-primary" onclick="saveMitarbeiter()"><i class="ti ti-check"></i> Speichern</button>
+  </div>
+</div>
+</div>
+
+<!-- Modal: Krankmeldung -->
+<div id="krank-modal" style="display:none" class="modal-bg">
+<div class="modal">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <h3 style="margin:0">Krankmeldung einreichen</h3>
+    <button class="btn btn-sm" onclick="hideModal('krank-modal')"><i class="ti ti-x"></i></button>
+  </div>
+  <div class="alert alert-orange"><i class="ti ti-alert-triangle"></i> Das System sucht automatisch nach einem Ersatztrainer.</div>
+  <div class="form-group"><label>Trainer</label>
+    <select id="krank-trainer">
+      <option>Max Müller</option><option>Anna Weber</option><option>Jonas Klein</option>
+      <option>Sara Bauer</option><option>Tim Schulz</option>
+    </select>
+  </div>
+  <div class="form-row">
+    <div class="form-group"><label>Von</label><input type="date" id="krank-von" value="2026-06-09"></div>
+    <div class="form-group"><label>Bis</label><input type="date" id="krank-bis" value="2026-06-09"></div>
+  </div>
+  <div class="form-group"><label>Grund</label>
+    <select id="krank-grund">
+      <option>Krankheit</option><option>Fortbildung</option><option>Wettkampf</option><option>Sonstiges</option>
+    </select>
+  </div>
+  <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px">
+    <button class="btn" onclick="hideModal('krank-modal')">Abbrechen</button>
+    <button class="btn btn-danger" onclick="submitKrankmeldung()"><i class="ti ti-alert-circle"></i> Krankmeldung einreichen</button>
+  </div>
+</div>
+</div>
+
+<!-- Modal: Vertretung -->
+<div id="vertretung-modal" style="display:none" class="modal-bg">
+<div class="modal">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <h3 style="margin:0">Vertretungssuche</h3>
+    <button class="btn btn-sm" onclick="hideModal('vertretung-modal')"><i class="ti ti-x"></i></button>
+  </div>
+  <div class="alert alert-blue"><i class="ti ti-search"></i> Das System hat verfügbare Ersatztrainer gefunden.</div>
+  <div id="vertretung-content"></div>
+  <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px">
+    <button class="btn" onclick="hideModal('vertretung-modal')">Abbrechen</button>
+  </div>
+</div>
+</div>
+
+<!-- Toast -->
+<div id="toast" style="position:fixed;bottom:24px;right:24px;background:#185FA5;color:#fff;padding:10px 18px;border-radius:var(--border-radius-md);font-size:13px;display:none;z-index:200;max-width:320px"></div>
+
+<script>
+const state = {
+  page: 'dashboard',
+  kurse: [
+    {id:1,name:'Yoga Basic',typ:'Yoga',datum:'Mo',zeit:'08:00',studio:'Studio 1',trainer:'Max Müller',status:'aktiv',farbe:'blue'},
+    {id:2,name:'Spinning',typ:'Spinning',datum:'Di',zeit:'09:00',studio:'Studio 1',trainer:'Anna Weber',status:'aktiv',farbe:'orange'},
+    {id:3,name:'Pilates',typ:'Pilates',datum:'Mo',zeit:'10:00',studio:'Studio 1',trainer:'Sara Bauer',status:'aktiv',farbe:'purple'},
+    {id:4,name:'Kraft & Fit',typ:'Krafttraining',datum:'Mi',zeit:'11:00',studio:'Studio 1',trainer:'Jonas Klein',status:'aktiv',farbe:'green'},
+    {id:5,name:'Functional Fit',typ:'Functional Fit',datum:'Do',zeit:'08:00',studio:'Studio 1',trainer:'Max Müller',status:'aktiv',farbe:'blue'},
+    {id:6,name:'Pilates Adv.',typ:'Pilates',datum:'Fr',zeit:'12:00',studio:'Studio 2',trainer:'Sara Bauer',status:'aktiv',farbe:'purple'},
+    {id:7,name:'Yoga Flow',typ:'Yoga',datum:'Di',zeit:'17:00',studio:'Studio 2',trainer:'Anna Weber',status:'aktiv',farbe:'blue'},
+    {id:8,name:'Spinning Pro',typ:'Spinning',datum:'Do',zeit:'18:00',studio:'Studio 2',trainer:'Tim Schulz',status:'ausgefallen',farbe:'gray'},
+  ],
+  mitarbeiter: [
+    {id:1,name:'Max Müller',rolle:'Trainer',modell:'Vollzeit',quali:'Yoga, Functional Fit',studios:['Studio 1','Studio 2'],kurseWoche:5,maxKurse:20,status:'verfügbar',email:'max@fit-aktiv.de'},
+    {id:2,name:'Anna Weber',rolle:'Trainerin',modell:'Vollzeit',quali:'Spinning, Pilates',studios:['Studio 1','Studio 2'],kurseWoche:4,maxKurse:20,status:'verfügbar',email:'anna@fit-aktiv.de'},
+    {id:3,name:'Jonas Klein',rolle:'Coach',modell:'Vollzeit',quali:'Krafttraining, Functional Fit',studios:['Studio 1'],kurseWoche:3,maxKurse:20,status:'verfügbar',email:'jonas@fit-aktiv.de'},
+    {id:4,name:'Sara Bauer',rolle:'Trainerin',modell:'Vollzeit',quali:'Pilates, Yoga',studios:['Studio 1','Studio 2','Studio 3'],kurseWoche:6,maxKurse:20,status:'verfügbar',email:'sara@fit-aktiv.de'},
+    {id:5,name:'Tim Schulz',rolle:'Trainer',modell:'Teilzeit',quali:'Spinning',studios:['Studio 2'],kurseWoche:2,maxKurse:8,status:'krank',email:'tim@fit-aktiv.de'},
+    {id:6,name:'Lisa Hoffmann',rolle:'Trainerin',modell:'Teilzeit',quali:'Yoga, Pilates',studios:['Studio 3'],kurseWoche:1,maxKurse:8,status:'verfügbar',email:'lisa.h@fit-aktiv.de'},
+  ],
+  benachrichtigungen: [
+    {id:1,typ:'danger',titel:'Kurs ausgefallen',text:'Spinning Pro am Donnerstag 18:00 ist ausgefallen. Tim Schulz ist krank.',zeit:'vor 1 Std.',gelesen:false},
+    {id:2,typ:'warning',titel:'Vertretung benötigt',text:'Für Spinning Pro wird ein Ersatztrainer gesucht.',zeit:'vor 1 Std.',gelesen:false},
+    {id:3,typ:'info',titel:'Neue Zuweisung',text:'Max Müller wurde Functional Fit am Donnerstag zugewiesen.',zeit:'vor 3 Std.',gelesen:false},
+    {id:4,typ:'success',titel:'Kurs angelegt',text:'Yoga Flow wurde erfolgreich für Dienstag 17:00 erstellt.',zeit:'vor 5 Std.',gelesen:true},
+    {id:5,typ:'success',titel:'Mitarbeiter gespeichert',text:'Anna Weber wurde aktualisiert.',zeit:'gestern',gelesen:true},
+  ]
+};
+
+function navigate(page) {
+  state.page = page;
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  const titles = {dashboard:'Dashboard',kursplan:'Kursplan – Wochenübersicht',kurse:'Kursverwaltung',mitarbeiter:'Mitarbeiterverwaltung',krankmeldung:'Krankmeldung & Vertretung',benachrichtigungen:'Benachrichtigungen',einstellungen:'Einstellungen'};
+  document.getElementById('page-title').textContent = titles[page]||page;
+  render(page);
+}
+
+function render(page) {
+  const c = document.getElementById('page-content');
+  if(page==='dashboard') c.innerHTML = renderDashboard();
+  else if(page==='kursplan') c.innerHTML = renderKursplan();
+  else if(page==='kurse') c.innerHTML = renderKurse();
+  else if(page==='mitarbeiter') c.innerHTML = renderMitarbeiter();
+  else if(page==='krankmeldung') c.innerHTML = renderKrankmeldung();
+  else if(page==='benachrichtigungen') c.innerHTML = renderBenachrichtigungen();
+  else if(page==='einstellungen') c.innerHTML = renderEinstellungen();
+}
+
+function renderDashboard() {
+  const aktive = state.kurse.filter(k=>k.status==='aktiv').length;
+  const ausgefallen = state.kurse.filter(k=>k.status==='ausgefallen').length;
+  const verfuegbar = state.mitarbeiter.filter(m=>m.status==='verfügbar').length;
+  const krank = state.mitarbeiter.filter(m=>m.status==='krank').length;
+  const ungelesen = state.benachrichtigungen.filter(b=>!b.gelesen).length;
+  return `
+  <div class="grid-4" style="margin-bottom:24px">
+    <div class="metric"><div class="metric-label">Kurse diese Woche</div><div class="metric-value">${state.kurse.length}</div><div class="metric-sub">${aktive} aktiv, ${ausgefallen} ausgefallen</div></div>
+    <div class="metric"><div class="metric-label">Aktive Trainer</div><div class="metric-value">${verfuegbar}</div><div class="metric-sub">${krank} krank gemeldet</div></div>
+    <div class="metric"><div class="metric-label">Studios</div><div class="metric-value">3</div><div class="metric-sub">Krefeld Mitte, Nord, Süd</div></div>
+    <div class="metric"><div class="metric-label">Benachrichtigungen</div><div class="metric-value">${ungelesen}</div><div class="metric-sub">ungelesen</div></div>
+  </div>
+  ${krank>0?`<div class="alert alert-red" style="margin-bottom:20px"><i class="ti ti-alert-triangle"></i> <strong>${krank} Trainer krank:</strong> Tim Schulz – Spinning Pro ausgefallen. <button class="btn btn-sm btn-danger" style="margin-left:auto" onclick="showVertretung()">Vertretung suchen</button></div>`:''}
+  <div class="grid-2">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="font-size:14px;font-weight:500">Heutige Kurse</div>
+        <button class="btn btn-sm" onclick="navigate('kursplan');document.querySelectorAll('.nav-item')[1].classList.add('active');document.querySelectorAll('.nav-item')[0].classList.remove('active')">Alle anzeigen</button>
+      </div>
+      <table class="table">
+        <thead><tr><th>Zeit</th><th>Kurs</th><th>Trainer</th><th>Studio</th><th>Status</th></tr></thead>
+        <tbody>
+          ${state.kurse.slice(0,5).map(k=>`
+          <tr>
+            <td style="color:var(--color-text-secondary)">${k.zeit}</td>
+            <td><strong style="font-weight:500">${k.name}</strong><br><span style="color:var(--color-text-secondary);font-size:11px">${k.typ}</span></td>
+            <td><div style="display:flex;align-items:center;gap:6px"><div class="avatar" style="width:24px;height:24px;font-size:10px">${k.trainer.split(' ').map(x=>x[0]).join('')}</div>${k.trainer}</div></td>
+            <td style="font-size:12px;color:var(--color-text-secondary)">${k.studio}</td>
+            <td><span class="badge badge-${k.status==='aktiv'?'green':'red'}">${k.status==='aktiv'?'Aktiv':'Ausgefallen'}</span></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div style="font-size:14px;font-weight:500;margin-bottom:14px">Trainer – Wochenstunden</div>
+      ${state.mitarbeiter.map(m=>`
+      <div style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div class="avatar" style="width:24px;height:24px;font-size:10px">${m.name.split(' ').map(x=>x[0]).join('')}</div>
+            <span style="font-size:13px">${m.name}</span>
+            ${m.status==='krank'?'<span class="badge badge-red">Krank</span>':''}
+          </div>
+          <span style="font-size:12px;color:var(--color-text-secondary)">${m.kurseWoche}/${m.maxKurse} Kurse</span>
+        </div>
+        <div class="prog-bar"><div class="prog-fill" style="width:${Math.round(m.kurseWoche/m.maxKurse*100)}%;background:${m.status==='krank'?'#A32D2D':'#185FA5'}"></div></div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function renderKursplan() {
+  const tage = ['Mo','Di','Mi','Do','Fr'];
+  const tagLabels = ['Montag<br>09.06.','Dienstag<br>10.06.','Mittwoch<br>11.06.','Donnerstag<br>12.06.','Freitag<br>13.06.'];
+  const zeiten = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00'];
+  let grid = `<div class="week-grid">
+    <div class="week-header" style="background:var(--color-background-secondary)"></div>
+    ${tagLabels.map(d=>`<div class="week-header">${d}</div>`).join('')}`;
+  zeiten.forEach(z=>{
+    grid += `<div class="week-time">${z}</div>`;
+    tage.forEach(t=>{
+      const kurse = state.kurse.filter(k=>k.datum===t&&k.zeit===z);
+      grid += `<div class="week-cell">${kurse.map(k=>`<div class="kurs-pill kurs-pill-${k.status==='ausgefallen'?'gray':k.farbe}" title="${k.name} – ${k.trainer}">${k.name}<br><span style="opacity:.7">${k.trainer.split(' ')[0]}</span></div>`).join('')}</div>`;
+    });
+  });
+  grid += '</div>';
+  return `
+  <div style="margin-bottom:16px;display:flex;gap:8px;flex-wrap:wrap">
+    <span style="font-size:12px;display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;background:#B5D4F4;border-radius:3px;display:inline-block"></span>Yoga/Allgemein</span>
+    <span style="font-size:12px;display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;background:#FAC775;border-radius:3px;display:inline-block"></span>Spinning</span>
+    <span style="font-size:12px;display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;background:#CECBF6;border-radius:3px;display:inline-block"></span>Pilates</span>
+    <span style="font-size:12px;display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;background:#C0DD97;border-radius:3px;display:inline-block"></span>Krafttraining/Functional</span>
+    <span style="font-size:12px;display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;background:#D3D1C7;border-radius:3px;display:inline-block"></span>Ausgefallen</span>
+  </div>
+  ${grid}`;
+}
+
+function renderKurse() {
+  return `
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <div class="search-box" style="flex:1;max-width:300px;margin:0"><i class="ti ti-search"></i><span>Kurs suchen...</span></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-sm" onclick="filterKurse('alle')">Alle</button>
+      <button class="btn btn-sm" onclick="filterKurse('aktiv')">Aktiv</button>
+      <button class="btn btn-sm" onclick="filterKurse('ausgefallen')">Ausgefallen</button>
+      <button class="btn btn-primary btn-sm" onclick="showModal('kurs-modal')"><i class="ti ti-plus"></i> Neuer Kurs</button>
+    </div>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden">
+  <table class="table">
+    <thead><tr><th>Kurs</th><th>Typ</th><th>Wochentag</th><th>Zeit</th><th>Studio</th><th>Trainer</th><th>Status</th><th></th></tr></thead>
+    <tbody id="kurse-tbody">
+    ${state.kurse.map(k=>`
+    <tr>
+      <td><strong style="font-weight:500">${k.name}</strong></td>
+      <td><span class="badge badge-blue">${k.typ}</span></td>
+      <td>${k.datum}</td>
+      <td>${k.zeit}</td>
+      <td style="font-size:12px;color:var(--color-text-secondary)">${k.studio}</td>
+      <td><div style="display:flex;align-items:center;gap:6px"><div class="avatar" style="width:24px;height:24px;font-size:10px">${k.trainer.split(' ').map(x=>x[0]).join('')}</div>${k.trainer}</div></td>
+      <td><span class="badge badge-${k.status==='aktiv'?'green':'red'}">${k.status==='aktiv'?'Aktiv':'Ausgefallen'}</span></td>
+      <td style="text-align:right">
+        <button class="btn btn-sm" onclick="toggleKursStatus(${k.id})">${k.status==='aktiv'?'Als ausgefallen markieren':'Reaktivieren'}</button>
+      </td>
+    </tr>`).join('')}
+    </tbody>
+  </table>
+  </div>`;
+}
+
+function renderMitarbeiter() {
+  return `
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <div class="search-box" style="flex:1;max-width:300px;margin:0"><i class="ti ti-search"></i><span>Mitarbeiter suchen...</span></div>
+    <button class="btn btn-primary btn-sm" onclick="showModal('ma-modal')"><i class="ti ti-plus"></i> Neuer Mitarbeiter</button>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden">
+  <table class="table">
+    <thead><tr><th>Name</th><th>Rolle</th><th>Modell</th><th>Qualifikationen</th><th>Studios</th><th>Kurse diese Woche</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+    ${state.mitarbeiter.map(m=>`
+    <tr>
+      <td><div style="display:flex;align-items:center;gap:8px"><div class="avatar">${m.name.split(' ').map(x=>x[0]).join('')}</div><div><div style="font-weight:500;font-size:13px">${m.name}</div><div style="font-size:11px;color:var(--color-text-secondary)">${m.email}</div></div></div></td>
+      <td>${m.rolle}</td>
+      <td><span class="badge ${m.modell==='Vollzeit'?'badge-blue':'badge-gray'}">${m.modell}</span></td>
+      <td style="font-size:12px;color:var(--color-text-secondary)">${m.quali}</td>
+      <td style="font-size:12px">${m.studios.join(', ')}</td>
+      <td>
+        <span style="font-size:13px">${m.kurseWoche}/${m.maxKurse}</span>
+        <div class="prog-bar" style="min-width:60px"><div class="prog-fill" style="width:${Math.round(m.kurseWoche/m.maxKurse*100)}%"></div></div>
+      </td>
+      <td><span class="badge badge-${m.status==='verfügbar'?'green':'red'}">${m.status==='verfügbar'?'Verfügbar':'Krank'}</span></td>
+      <td><button class="btn btn-sm" onclick="meldeMitarbeiterKrank(${m.id})">${m.status==='verfügbar'?'Krankmelden':'Reaktivieren'}</button></td>
+    </tr>`).join('')}
+    </tbody>
+  </table>
+  </div>`;
+}
+
+function renderKrankmeldung() {
+  const kranke = state.mitarbeiter.filter(m=>m.status==='krank');
+  return `
+  <div class="grid-2">
+    <div>
+      <div class="card" style="margin-bottom:16px">
+        <div style="font-size:14px;font-weight:500;margin-bottom:14px"><i class="ti ti-alert-circle" style="color:#A32D2D"></i> Krankmeldung einreichen</div>
+        <div class="form-group"><label>Trainer auswählen</label>
+          <select id="kf-trainer">${state.mitarbeiter.map(m=>`<option>${m.name}</option>`).join('')}</select>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Nicht verfügbar von</label><input type="date" value="2026-06-09" id="kf-von"></div>
+          <div class="form-group"><label>Bis</label><input type="date" value="2026-06-09" id="kf-bis"></div>
+        </div>
+        <div class="form-group"><label>Grund</label>
+          <select id="kf-grund"><option>Krankheit</option><option>Fortbildung</option><option>Wettkampf</option><option>Sonstiges</option></select>
+        </div>
+        <div class="alert alert-orange" style="margin-bottom:14px"><i class="ti ti-info-circle"></i> Das System startet automatisch eine Vertretungssuche.</div>
+        <button class="btn btn-danger" onclick="submitKrankmeldungForm()"><i class="ti ti-alert-circle"></i> Krankmeldung einreichen</button>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div style="font-size:14px;font-weight:500;margin-bottom:14px">Aktuell abwesende Trainer</div>
+        ${kranke.length===0?`<div class="empty-state"><i class="ti ti-circle-check" style="color:#3B6D11"></i><div>Alle Trainer verfügbar</div></div>`:''}
+        ${kranke.map(m=>`
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);margin-bottom:8px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="avatar">${m.name.split(' ').map(x=>x[0]).join('')}</div>
+            <div>
+              <div style="font-weight:500;font-size:13px">${m.name}</div>
+              <div style="font-size:11px;color:var(--color-text-secondary)">${m.rolle} – ${m.quali}</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+            <span class="badge badge-red">Krank</span>
+            <button class="btn btn-sm" onclick="reaktiviere(${m.id})">Reaktivieren</button>
+          </div>
+        </div>`).join('')}
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div style="font-size:14px;font-weight:500;margin-bottom:14px"><i class="ti ti-arrows-exchange" style="color:#185FA5"></i> Vertretungssuche</div>
+        <div class="alert alert-blue"><i class="ti ti-info-circle"></i> Das System prüft Verfügbarkeit, Qualifikation und Fahrtzeiten (1h Puffer bei studioübergreifendem Einsatz).</div>
+        <div style="margin-top:12px">
+          <div style="font-size:13px;font-weight:500;margin-bottom:8px">Verfügbare Ersatztrainer (Spinning Pro, Do 18:00):</div>
+          ${state.mitarbeiter.filter(m=>m.status==='verfügbar'&&(m.quali.includes('Spinning')||m.quali.includes('Alle'))).map(m=>`
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);margin-bottom:6px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="avatar">${m.name.split(' ').map(x=>x[0]).join('')}</div>
+              <div>
+                <div style="font-size:13px;font-weight:500">${m.name}</div>
+                <div style="font-size:11px;color:var(--color-text-secondary)">${m.kurseWoche}/${m.maxKurse} Kurse diese Woche</div>
+              </div>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="assignVertretung('${m.name}')"><i class="ti ti-check"></i> Zuweisen</button>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderBenachrichtigungen() {
+  const ungelesen = state.benachrichtigungen.filter(b=>!b.gelesen).length;
+  const typMap = {danger:'red',warning:'orange',info:'blue',success:'green'};
+  const iconMap = {danger:'ti-alert-triangle',warning:'ti-alert-circle',info:'ti-info-circle',success:'ti-circle-check'};
+  return `
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    <div style="font-size:13px;color:var(--color-text-secondary)">${ungelesen} ungelesene Benachrichtigung${ungelesen!==1?'en':''}</div>
+    <button class="btn btn-sm" onclick="alleGelesen()"><i class="ti ti-check"></i> Alle als gelesen markieren</button>
+  </div>
+  <div id="notif-list">
+  ${state.benachrichtigungen.map((b,i)=>`
+  <div class="notification-item ${b.gelesen?'':'unread'}" id="notif-${i}">
+    <div style="width:32px;height:32px;border-radius:50%;background:var(--color-background-${typMap[b.typ]||'secondary'});display:flex;align-items:center;justify-content:center;flex-shrink:0">
+      <i class="ti ${iconMap[b.typ]||'ti-bell'}" style="color:var(--color-text-${typMap[b.typ]||'secondary'})"></i>
+    </div>
+    <div style="flex:1">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-weight:500;font-size:13px">${b.titel}</div>
+        <div style="font-size:11px;color:var(--color-text-secondary)">${b.zeit}</div>
+      </div>
+      <div style="font-size:12px;color:var(--color-text-secondary);margin-top:2px">${b.text}</div>
+    </div>
+    ${!b.gelesen?`<button class="btn btn-sm" onclick="markRead(${i})">Gelesen</button>`:''}
+  </div>`).join('')}
+  </div>`;
+}
+
+function renderEinstellungen() {
+  return `
+  <div class="grid-2">
+    <div class="card">
+      <div style="font-size:14px;font-weight:500;margin-bottom:16px">Studios verwalten</div>
+      ${['Studio 1 – Krefeld Mitte','Studio 2 – Krefeld Nord','Studio 3 – Krefeld Süd'].map((s,i)=>`
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);margin-bottom:8px">
+        <div><i class="ti ti-building" style="margin-right:8px;color:var(--color-text-secondary)"></i>${s}</div>
+        <button class="btn btn-sm"><i class="ti ti-edit"></i></button>
+      </div>`).join('')}
+      <button class="btn btn-sm" style="margin-top:8px;width:100%;justify-content:center"><i class="ti ti-plus"></i> Studio hinzufügen</button>
+    </div>
+    <div class="card">
+      <div style="font-size:14px;font-weight:500;margin-bottom:16px">Kurstypen</div>
+      ${['Yoga','Pilates','Spinning','Krafttraining','Functional Fit'].map(t=>`
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);margin-bottom:8px">
+        <div><span class="badge badge-blue">${t}</span></div>
+        <button class="btn btn-sm"><i class="ti ti-edit"></i></button>
+      </div>`).join('')}
+    </div>
+    <div class="card">
+      <div style="font-size:14px;font-weight:500;margin-bottom:16px">Benachrichtigungen</div>
+      ${[['E-Mail bei Krankmeldung','checked'],['Push-Benachrichtigung bei Kursausfall','checked'],['Erinnerung 4h vor Planänderung',''],['Tagesbericht morgens','']].map(([l,c])=>`
+      <label style="display:flex;align-items:center;gap:10px;padding:8px 0;cursor:pointer;font-size:13px;border-bottom:0.5px solid var(--color-border-tertiary)">
+        <input type="checkbox" ${c}> ${l}
+      </label>`).join('')}
+    </div>
+    <div class="card">
+      <div style="font-size:14px;font-weight:500;margin-bottom:16px">System</div>
+      <div class="form-group"><label>Fahrtzeit zwischen Studios (Minuten)</label><input type="number" value="60"></div>
+      <div class="form-group"><label>Standard-Kursdauer (Minuten)</label><input type="number" value="60"></div>
+      <div class="form-group"><label>Betriebstage</label><input type="text" value="Montag – Freitag"></div>
+      <button class="btn btn-primary btn-sm"><i class="ti ti-check"></i> Einstellungen speichern</button>
+    </div>
+  </div>`;
+}
+
+function showModal(id){document.getElementById(id).style.display='flex'}
+function hideModal(id){document.getElementById(id).style.display='none'}
+
+function showToast(msg,color){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.background=color||'#185FA5';t.style.display='block';
+  setTimeout(()=>t.style.display='none',3000);
+}
+
+function saveKurs(){
+  const name=document.getElementById('new-kurs-name').value||'Neuer Kurs';
+  const typ=document.getElementById('new-kurs-typ').value;
+  const trainer=document.getElementById('new-kurs-trainer').value||'Nicht zugewiesen';
+  const farben={Yoga:'blue',Pilates:'purple',Spinning:'orange',Krafttraining:'green','Functional Fit':'green'};
+  state.kurse.push({id:Date.now(),name,typ,datum:'Mo',zeit:'08:00',studio:'Studio 1',trainer,status:'aktiv',farbe:farben[typ]||'blue'});
+  hideModal('kurs-modal');
+  showToast(`Kurs "${name}" wurde angelegt.`,'#3B6D11');
+  if(state.page==='kurse'||state.page==='dashboard') render(state.page);
+}
+
+function saveMitarbeiter(){
+  const vn=document.getElementById('ma-vorname').value||'Neu';
+  const nn=document.getElementById('ma-nachname').value||'Mitarbeiter';
+  const name=`${vn} ${nn}`;
+  state.mitarbeiter.push({id:Date.now(),name,rolle:document.getElementById('ma-rolle').value,modell:document.getElementById('ma-modell').value.includes('Vollzeit')?'Vollzeit':'Teilzeit',quali:document.getElementById('ma-quali').value,studios:['Studio 1'],kurseWoche:0,maxKurse:20,status:'verfügbar',email:`${vn.toLowerCase()}@fit-aktiv.de`});
+  hideModal('ma-modal');
+  showToast(`${name} wurde angelegt.`,'#3B6D11');
+  render(state.page);
+}
+
+function toggleKursStatus(id){
+  const k=state.kurse.find(x=>x.id===id);
+  if(k){k.status=k.status==='aktiv'?'ausgefallen':'aktiv';render(state.page);showToast(`${k.name}: Status geändert zu "${k.status}".`,k.status==='aktiv'?'#3B6D11':'#A32D2D');}
+}
+
+function meldeMitarbeiterKrank(id){
+  const m=state.mitarbeiter.find(x=>x.id===id);
+  if(m){
+    if(m.status==='verfügbar'){
+      m.status='krank';
+      showToast(`${m.name} wurde als krank markiert. Vertretungssuche gestartet.`,'#A32D2D');
+      state.benachrichtigungen.unshift({typ:'danger',titel:'Krankmeldung',text:`${m.name} wurde als nicht verfügbar markiert.`,zeit:'gerade',gelesen:false});
+      document.getElementById('notif-badge').textContent=state.benachrichtigungen.filter(b=>!b.gelesen).length;
+    } else {
+      m.status='verfügbar';
+      showToast(`${m.name} ist wieder verfügbar.`,'#3B6D11');
+    }
+    render(state.page);
+  }
+}
+
+function reaktiviere(id){
+  const m=state.mitarbeiter.find(x=>x.id===id);
+  if(m){m.status='verfügbar';showToast(`${m.name} ist wieder verfügbar.`,'#3B6D11');render(state.page);}
+}
+
+function submitKrankmeldung(){
+  const trainer=document.getElementById('krank-trainer').value;
+  const grund=document.getElementById('krank-grund').value;
+  hideModal('krank-modal');
+  showToast(`Krankmeldung für ${trainer} (${grund}) eingereicht. Vertretungssuche läuft...`,'#A32D2D');
+  setTimeout(()=>showVertretung(),1000);
+}
+
+function submitKrankmeldungForm(){
+  const trainer=document.getElementById('kf-trainer').value;
+  const grund=document.getElementById('kf-grund').value;
+  showToast(`Krankmeldung für ${trainer} (${grund}) eingereicht. Vertretungssuche läuft...`,'#A32D2D');
+}
+
+function showVertretung(){
+  const verfuegbar=state.mitarbeiter.filter(m=>m.status==='verfügbar');
+  document.getElementById('vertretung-content').innerHTML=`
+  <div style="font-size:13px;font-weight:500;margin-bottom:12px">Geeignete Ersatztrainer für Spinning Pro, Do 18:00:</div>
+  ${verfuegbar.slice(0,3).map(m=>`
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);margin-bottom:6px">
+    <div style="display:flex;align-items:center;gap:8px">
+      <div class="avatar">${m.name.split(' ').map(x=>x[0]).join('')}</div>
+      <div>
+        <div style="font-size:13px;font-weight:500">${m.name}</div>
+        <div style="font-size:11px;color:var(--color-text-secondary)">${m.kurseWoche}/${m.maxKurse} Kurse – ${m.quali}</div>
+      </div>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="assignVertretung('${m.name}')"><i class="ti ti-check"></i> Zuweisen</button>
+  </div>`).join('')}`;
+  showModal('vertretung-modal');
+}
+
+function assignVertretung(name){
+  hideModal('vertretung-modal');
+  showToast(`${name} wurde als Ersatztrainer zugewiesen. Benachrichtigung gesendet.`,'#3B6D11');
+  const k=state.kurse.find(x=>x.name==='Spinning Pro');
+  if(k){k.trainer=name;k.status='aktiv';}
+  state.benachrichtigungen.unshift({typ:'success',titel:'Vertretung gefunden',text:`${name} übernimmt Spinning Pro am Donnerstag 18:00.`,zeit:'gerade',gelesen:false});
+  document.getElementById('notif-badge').textContent=state.benachrichtigungen.filter(b=>!b.gelesen).length;
+  if(state.page==='krankmeldung'||state.page==='dashboard') render(state.page);
+}
+
+function filterKurse(filter){
+  render(state.page);
+}
+
+function alleGelesen(){
+  state.benachrichtigungen.forEach(b=>b.gelesen=true);
+  document.getElementById('notif-badge').textContent=0;
+  render('benachrichtigungen');
+  showToast('Alle als gelesen markiert.');
+}
+
+function markRead(i){
+  state.benachrichtigungen[i].gelesen=true;
+  document.getElementById('notif-badge').textContent=state.benachrichtigungen.filter(b=>!b.gelesen).length;
+  render('benachrichtigungen');
+}
+
+render('dashboard');
+</script>
