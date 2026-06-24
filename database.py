@@ -147,16 +147,41 @@ def _seed(db):
     if db.execute("SELECT COUNT(*) FROM studios").fetchone()[0] > 0:
         return  # Bereits befüllt
 
-    # Studios
-    db.execute("INSERT INTO studios (name, adresse) VALUES ('Studio 1 – Krefeld Mitte','Hauptstr. 10, 47798 Krefeld')")
-    db.execute("INSERT INTO studios (name, adresse) VALUES ('Studio 2 – Krefeld Nord','Nordstr. 25, 47809 Krefeld')")
-    db.execute("INSERT INTO studios (name, adresse) VALUES ('Studio 3 – Krefeld Süd','Südring 5, 47803 Krefeld')")
+    # ── Studios ────────────────────────────────────────────────────────────
+    studios_data = [
+        ("Studio 01 – Krefeld Mitte",      "Hauptstr. 10, 47798 Krefeld"),
+        ("Studio 02 – Krefeld Nord",        "Nordstr. 25, 47809 Krefeld"),
+        ("Studio 03 – Krefeld Süd",         "Südring 5, 47803 Krefeld"),
+        ("Studio 04 – Krefeld West",        "Westwall 18, 47798 Krefeld"),
+        ("Studio 05 – Krefeld Ost",         "Ostwall 7, 47798 Krefeld"),
+        ("Studio 06 – Krefeld Uerdingen",   "Uerdinger Str. 42, 47800 Krefeld"),
+        ("Studio 07 – Krefeld Bockum",      "Bockumer Str. 15, 47809 Krefeld"),
+        ("Studio 08 – Krefeld Hüls",        "Hülser Str. 33, 47839 Krefeld"),
+        ("Studio 09 – Krefeld Fischeln",    "Fischelner Str. 8, 47807 Krefeld"),
+        ("Studio 10 – Krefeld Oppum",       "Oppumer Str. 22, 47804 Krefeld"),
+        ("Studio 11 – Krefeld Linn",        "Linner Str. 11, 47809 Krefeld"),
+        ("Studio 12 – Krefeld Gartenstadt", "Gartenstr. 50, 47802 Krefeld"),
+        ("Studio 13 – Krefeld Dießem",      "Dießemer Str. 3, 47805 Krefeld"),
+        ("Studio 14 – Krefeld Elfrath",     "Elfrather Weg 9, 47800 Krefeld"),
+        ("Studio 15 – Krefeld Traar",       "Traarer Str. 17, 47839 Krefeld"),
+        ("Studio 16 – Duisburg Zentrum",    "Königstr. 30, 47051 Duisburg"),
+        ("Studio 17 – Mönchengladbach",     "Hindenburgstr. 12, 41061 Mönchengladbach"),
+        ("Studio 18 – Neuss Innenstadt",    "Breite Str. 5, 41460 Neuss"),
+        ("Studio 19 – Viersen",             "Hauptstr. 44, 41747 Viersen"),
+        ("Studio 20 – Willich",             "Stadtring 7, 47877 Willich"),
+        ("Studio 21 – Kempen",              "Engerstr. 20, 47906 Kempen"),
+        ("Studio 22 – Tönisvorst",          "Hochstr. 3, 47918 Tönisvorst"),
+    ]
+    for name, adresse in studios_data:
+        db.execute("INSERT INTO studios (name, adresse) VALUES (?, ?)", (name, adresse))
 
-    # Räume
-    for studio_id in [1, 2, 3]:
+    # ── Räume für alle 22 Studios ──────────────────────────────────────────
+    for studio_id in range(1, 23):
         db.execute("INSERT INTO raeume (studio_id, name, kapazitaet) VALUES (?,?,20)", (studio_id, "Kursraum A"))
         db.execute("INSERT INTO raeume (studio_id, name, kapazitaet) VALUES (?,?,15)", (studio_id, "Kursraum B"))
 
+    # ── Kurstypen ──────────────────────────────────────────────────────────
+    # ... keep original code from here down unchanged ...
     # Kurstypen
     kurstypen = [
         ("Yoga",           "Yoga"),
